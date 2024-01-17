@@ -1,22 +1,18 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const locationRoutes = require('./src/routes/locationRoutes');
+const weatherRoutes = require('./src/routes/weatherRoutes');
+const { errorMiddleware } = require('./src/middleware/errorMiddleware')
+require('./config/db')
 
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-});
 
 // Body parser middleware
 app.use(bodyParser.json());
@@ -33,18 +29,9 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Routes
-const locationRoutes = require('./src/routes/locationRoutes');
-const weatherRoutes = require('./src/routes/weatherRoutes');
-
 app.use('/locations', locationRoutes);
 app.use('/weather', weatherRoutes);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-});
+app.use(errorMiddleware)
 
 // Start the server
 app.listen(PORT, () => {
