@@ -1,5 +1,12 @@
 const Location = require('../models/Location');
 const { ErrorHandler } = require('../middleware/errorMiddleware');
+const { validateBody } = require('../lib/validation');
+
+const validationRules = {
+    name: 'required',
+    latitude: 'required|numeric',
+    longitude: 'required|numeric',
+};
 
 // Get all locations
 exports.getAllLocations = async (req, res, next) => {
@@ -14,6 +21,7 @@ exports.getAllLocations = async (req, res, next) => {
 // Add a new location
 exports.addLocation = async (req, res, next) => {
     try {
+        validateBody(req.body, validationRules);
         const { name, latitude, longitude } = req.body;
         const newLocation = new Location({ name, latitude, longitude });
         const savedLocation = await newLocation.save();
@@ -39,6 +47,7 @@ exports.getLocationById = async (req, res, next) => {
 // Update a location by ID
 exports.updateLocationById = async (req, res, next) => {
     try {
+        validateBody(req.body, validationRules);
         const { name, latitude, longitude } = req.body;
         const updatedLocation = await Location.findByIdAndUpdate(
             req.params.location_id,
