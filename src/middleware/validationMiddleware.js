@@ -1,4 +1,6 @@
 const { validationResult } = require('express-validator');
+const { ErrorHandler } = require('../middleware/errorMiddleware');
+
 
 // Validation middleware to handle input validation
 const validate = (validations) => {
@@ -9,8 +11,7 @@ const validate = (validations) => {
         if (errors.isEmpty()) {
             return next();
         }
-
-        return res.status(422).json({ errors: errors.array() });
+        throw new ErrorHandler({ errors: errors.array(), statusCode: 422 })
     };
 };
 

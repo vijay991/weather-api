@@ -1,4 +1,5 @@
 const Location = require('../models/Location');
+const { ErrorHandler } = require('../middleware/errorMiddleware');
 
 // Get all locations
 exports.getAllLocations = async (req, res, next) => {
@@ -6,7 +7,7 @@ exports.getAllLocations = async (req, res, next) => {
         const locations = await Location.find();
         res.json(locations);
     } catch (error) {
-        next(error);
+        next(new ErrorHandler(error))
     }
 };
 
@@ -18,7 +19,7 @@ exports.addLocation = async (req, res, next) => {
         const savedLocation = await newLocation.save();
         res.status(201).json(savedLocation);
     } catch (error) {
-        next(error);
+        next(new ErrorHandler(error))
     }
 };
 
@@ -27,11 +28,11 @@ exports.getLocationById = async (req, res, next) => {
     try {
         const location = await Location.findById(req.params.location_id);
         if (!location) {
-            return res.status(404).json({ message: 'Location not found' });
+            throw new ErrorHandler({ message: 'Location not found', statusCode: 404 });
         }
         res.json(location);
     } catch (error) {
-        next(error);
+        next(new ErrorHandler(error))
     }
 };
 
@@ -45,23 +46,23 @@ exports.updateLocationById = async (req, res, next) => {
             { new: true }
         );
         if (!updatedLocation) {
-            return res.status(404).json({ message: 'Location not found' });
+            throw new ErrorHandler({ message: 'Location not found', statusCode: 404 });
         }
         res.json(updatedLocation);
     } catch (error) {
-        next(error);
+        next(new ErrorHandler(error))
     }
 };
 
 // Delete a location by ID
 exports.deleteLocationById = async (req, res, next) => {
     try {
-        const deletedLocation = await Location.findByIdAndRemove(req.params.location_id);
+        const deletedLocation = await Location.findOneAndDelete({ _id: req.params.location_id });
         if (!deletedLocation) {
-            return res.status(404).json({ message: 'Location not found' });
+            throw new ErrorHandler({ message: 'Location not found', statusCode: 404 });
         }
         res.json({ message: 'Location deleted successfully' });
     } catch (error) {
-        next(error);
+        next(new ErrorHandler(error))
     }
 };

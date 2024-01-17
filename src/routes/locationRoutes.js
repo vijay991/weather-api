@@ -12,10 +12,10 @@ const addLocationValidations = [
 ];
 
 // Routes for location operations
-router.get('/locations', locationController.getAllLocations);
-router.post('/locations', validate(addLocationValidations), locationController.addLocation);
-router.get('/locations/:location_id', locationController.getLocationById);
-router.put('/locations/:location_id', validate(addLocationValidations), locationController.updateLocationById);
-router.delete('/locations/:location_id', locationController.deleteLocationById);
+router.get('/', locationController.getAllLocations);
+router.post('/', validate(addLocationValidations), locationController.addLocation);
+router.get('/:location_id', locationController.getLocationById);
+router.put('/:location_id', validate(addLocationValidations), locationController.updateLocationById);
+router.delete('/:location_id', locationController.deleteLocationById);
 
 module.exports = router;
