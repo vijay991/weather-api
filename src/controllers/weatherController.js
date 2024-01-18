@@ -1,8 +1,7 @@
-const axios = require('axios');
 const cacheService = require('../services/cacheService');
 const { ErrorHandler } = require('../middleware/errorMiddleware');
 const Location = require('../models/Location')
-const BASE_URL = 'https://api.weatherapi.com/v1'
+const { getCurrentWeatherData, getHistoricalWeatherData } = require('../services/externalWeatherService')
 
 // Get the weather forecast for a specific location
 exports.getWeatherByLocation = async (req, res, next) => {
@@ -17,17 +16,12 @@ exports.getWeatherByLocation = async (req, res, next) => {
         }
 
         // Fetch real-time weather data from WeatherAPI.com
-        const apiKey = process.env.WEATHER_API_API_KEY;
         const location = await Location.findById(req.params.location_id);
         if (!location) {
             throw new ErrorHandler({ message: 'Location not found', statusCode: 404 });
         }
         const { latitude, longitude } = location;
-
-        const externalApiUrl = `${BASE_URL}/current.json?key=${apiKey}&q=${latitude},${longitude}`;
-
-        const response = await axios.get(externalApiUrl);
-        const weatherData = response.data;
+        const weatherData = getCurrentWeatherData(latitude, longitude)
 
         // Cache the weather data for future requests
         cacheService.setWeather(locationId, weatherData);
@@ -52,17 +46,12 @@ exports.getHistoricalWeather = async (req, res, next) => {
         }
 
         // Fetch historical weather data from WeatherAPI.com
-        const apiKey = process.env.WEATHER_API_API_KEY;
         const location = await Location.findById(req.params.location_id);
         if (!location) {
             throw new ErrorHandler({ message: 'Location not found', statusCode: 404 });
         }
         const { latitude, longitude } = location;
-
-        const externalApiUrl = `${BASE_URL}/history.json?key=${apiKey}&q=${latitude},${longitude}&dt=${getFormattedDate(days)}&end_dt=${getFormattedDate(1)}`;
-
-        const response = await axios.get(externalApiUrl);
-        const historicalWeatherData = response.data;
+        const historicalWeatherData = getHistoricalWeatherData(latitude, longitude, days)
 
         // Cache the historical weather data for future requests
         cacheService.setHistoricalWeather(locationId, days, historicalWeatherData);
@@ -72,17 +61,3 @@ exports.getHistoricalWeather = async (req, res, next) => {
         next(new ErrorHandler(error));
     }
 };
-
-// Helper function to get the formatted date for the specified number of days ago
-const getFormattedDate = (daysAgo) => {
-    const today = new Date();
-    const targetDate = new Date(today);
-    targetDate.setDate(today.getDate() - daysAgo);
-
-    const year = targetDate.getFullYear();
-    const month = (targetDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = targetDate.getDate().toString().padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-};
-

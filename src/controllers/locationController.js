@@ -44,6 +44,18 @@ exports.getLocationById = async (req, res, next) => {
     }
 };
 
+exports.getLocationById = async (req, res, next) => {
+    try {
+        const location = await Location.findById(req.params.location_id);
+        if (!location) {
+            throw new ErrorHandler({ message: 'Location not found', statusCode: 404 });
+        }
+        res.json(location);
+    } catch (error) {
+        next(new ErrorHandler(error))
+    }
+};
+
 // Update a location by ID
 exports.updateLocationById = async (req, res, next) => {
     try {
