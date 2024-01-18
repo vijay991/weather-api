@@ -28,14 +28,14 @@ This project is a RESTful API that provides real-time weather forecasts based on
   ```
 
 ## API Endpoints
--GET /locations: Get all locations or add a new location.
+- GET /locations: Get all locations or add a new location.
 - /locations/<location_id>: Get, update, or delete a specific location by ID.
--GET /weather/<location_id>: Get the weather forecast for a specific location.
--GET /history: Get historical data for the last 7, 15, or 30 days.
+- GET /weather/<location_id>: Get the weather forecast for a specific location.
+- GET /history: Get historical data for the last 7, 15, or 30 days.
 
 ## Technical Details
--Node.js: The server is built with Node.js using Express.
--Database: MongoDB is used to store location data.
--External Service: Weather data is fetched from WeatherAPI.com.
--Caching: External API responses are cached to reduce calls.
--Rate limiting: prevent abuse of the API
+- Node.js: The server is built with Node.js using Express.
+- Database: MongoDB is used to store location data.
+- External Service: Weather data is fetched from WeatherAPI.com.
+- Caching: External API responses are cached to reduce calls.
+- Rate limiting: prevent abuse of the API
