@@ -6,10 +6,8 @@ const locationRoutes = require('./src/routes/locationRoutes');
 const weatherRoutes = require('./src/routes/weatherRoutes');
 const { errorMiddleware } = require('./src/middleware/errorMiddleware')
 const limiter = require('./src/middleware/rateLimitMiddleware')
-require('./config/db')
-
-// Load environment variables from .env file
 dotenv.config();
+require('./config/db')
 
 const app = express();
 const PORT = process.env.PORT || 3000;

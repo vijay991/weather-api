@@ -1,15 +1,12 @@
 class ErrorHandler extends Error {
-    constructor({ message, statusCode, issues = [] } = error) {
-        super(message)
-        this.statusCode = statusCode
-        this.issues = issues
+    constructor({ message = 'Internal Server Error', statusCode = 500, issues = [] } = {}) {
+        super(message);
+        this.statusCode = statusCode;
+        this.issues = issues;
     }
 }
 
 const errorMiddleware = (err, _, res, next) => {
-    err.message = err.message || 'Internal server Error.'
-    err.statusCode = err.statusCode || 500
-
     if (process.env.NODE_ENV === 'development') {
         console.error(err)
     }
