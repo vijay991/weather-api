@@ -1,5 +1,5 @@
 class ErrorHandler extends Error {
-    constructor({ message = 'Internal Server Error', statusCode = 500, issues = [] } = {}) {
+    constructor({ message = 'Internal Server Error', statusCode = 500, issues = [] } = error) {
         super(message);
         this.statusCode = statusCode;
         this.issues = issues;
