@@ -14,7 +14,7 @@ This project is a RESTful API that provides real-time weather forecasts based on
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/weather-api.git
+   git clone https://github.com/vijay991/weather-api.git
    cd weather-api
    ```
 2. Set up environment variables:
